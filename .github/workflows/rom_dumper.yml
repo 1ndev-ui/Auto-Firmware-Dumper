@@ -43,7 +43,6 @@ on:
 jobs:
   build:
     name: Auto Firmware Dumper
-    if: github.event.repository.owner.id == github.event.sender.id
     runs-on: ubuntu-latest
     env:
       GITHUB_TOKEN: ${{ secrets.GTOKEN }}
@@ -56,6 +55,16 @@ jobs:
     permissions:
       contents: write
     steps:
+    - name: Check if sender is repository owner
+      if: github.event.repository.owner.login == github.event.sender.login
+      run: |
+        echo "Sender is the repository owner"
+    - name: Not the repository owner
+      if: github.event.repository.owner.login != github.event.sender.login
+      run: |
+        echo "Sender is not the repository owner"
+        exit 1
+        
     - name: Check Out
       uses: actions/checkout@v3
       
